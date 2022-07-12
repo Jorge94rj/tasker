@@ -2,16 +2,29 @@ import React from "react";
 import Modal from "../modal";
 import { FormContainer, RowItem } from "../../styles/form-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { updateControlEvts, updateTaskForm } from "../../redux/store/form-task-slice";
+import { clearTaskForm, updateControlEvts, updateTaskForm } from "../../redux/store/form-task-slice";
 import ErrorTag from "../errorTag";
+import { createTask } from "../../firebase/task";
+import { pushTask } from "../../redux/store/task-list-slice";
 
-const CreateTaskModal = (props) => {
+const UpdateTaskModal = (props) => {
+    const { data } = props
     const dispatch = useDispatch()
     const { formTask, auth:{uid} } = useSelector(store => store)
 
-    const handleSubmit = (e) => {
+    // if (data) {
+    //     dispatch(updateTaskForm(data))
+    // }
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log('uid->', uid)
+        const task = {...formTask, uid}
+        delete task.controls
+        const createdTask = await createTask(task)
+        task.id = createdTask.id
+        dispatch(clearTaskForm())
+        dispatch(pushTask(task))
+        document.getElementById('taskForm').reset()
     }
 
     const handleInput = ({ target: { name, value } }) => {
@@ -33,9 +46,9 @@ const CreateTaskModal = (props) => {
 
     return (
         <Modal {...props} width="600px" height="534px">
-            <form onSubmit={handleSubmit}>
+            <form id="taskForm" onSubmit={handleSubmit}>
                 <FormContainer>
-                    <h4>Create task</h4>
+                    <h4>{ props.id === 'createTask' ? 'Create task' : 'Edit Task'}</h4>
                     <RowItem>
                         <input
                             name="name"
@@ -45,7 +58,7 @@ const CreateTaskModal = (props) => {
                         />
                     </RowItem>
                     {
-                        formTask.controls.name.touched && !formTask.name
+                        formTask?.controls?.name?.touched && !formTask.name
                         && <ErrorTag>Name is required</ErrorTag>
                     }
                     <RowItem>
@@ -61,7 +74,7 @@ const CreateTaskModal = (props) => {
                         </select>
                     </RowItem>
                     {
-                        formTask.controls.priority.touched && !formTask.priority
+                        formTask?.controls?.priority?.touched && !formTask.priority
                         && <ErrorTag>Priority is required</ErrorTag>
                     }
                     <RowItem>
@@ -77,7 +90,7 @@ const CreateTaskModal = (props) => {
                         </select>
                     </RowItem>
                     {
-                        formTask.controls.status.touched && !formTask.status
+                        formTask?.controls?.status?.touched && !formTask.status
                         && <ErrorTag>Status is required</ErrorTag>
                     }
                     <RowItem>
@@ -89,7 +102,7 @@ const CreateTaskModal = (props) => {
                         />
                     </RowItem>
                     {
-                        formTask.controls.description.touched && !formTask.description
+                        formTask?.controls?.description?.touched && !formTask.description
                         && <ErrorTag>Description is required</ErrorTag>
                     }
                     <RowItem>
@@ -121,4 +134,4 @@ const CreateTaskModal = (props) => {
     )
 }
 
-export default CreateTaskModal
+export default UpdateTaskModal

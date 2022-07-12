@@ -41,9 +41,9 @@ export const CardHeader = styled.div`
             border-radius: 50%;
             background-color: ${({priority}) => {
                 switch(priority) {
-                    case 1: return 'red;'
-                    case 2: return 'yellow;'
-                    case 3: return '#0099cc;'
+                    case '1': return 'red;'
+                    case '2': return 'yellow;'
+                    case '3': return '#0099cc;'
                     default: return 'gray;'
                 }
             }}

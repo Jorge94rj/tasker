@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../firebase/auth";
-import CreateTaskModal from "../createTaskModal";
+import UpdateTaskModal from "../updateTaskModal";
 import Icon from "../icon";
 import { NavbarContainer, ItemsContainer, Item, NavMainActions } from "./style";
 
@@ -63,7 +63,7 @@ const Navbar = () => {
                     </Item>
                 </ItemsContainer>
             </NavbarContainer>
-            <CreateTaskModal 
+            <UpdateTaskModal 
                 id="createTask"
                 open={isModalOpen}
                 onClose={handleCloseModal}
