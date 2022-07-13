@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Modal from "../modal";
 import { FormContainer, RowItem } from "../../styles/form-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { 
+import {
     clearTaskForm,
     updateControlEvts,
     updateTaskForm,
@@ -10,6 +10,7 @@ import {
 import ErrorTag from "../errorTag";
 import { createTask, updateTask } from "../../firebase/task";
 import { pushTask, updateTaskFromList } from "../../redux/store/task-list-slice";
+import openToast from "../utils/open-toast";
 
 const UpdateTaskModal = (props) => {
     const { id, open, onClose, data } = props
@@ -29,17 +30,19 @@ const UpdateTaskModal = (props) => {
         e.preventDefault()
         const task = { ...formTask, uid }
         delete task.controls
-        if(!isEditMode) {
+        if (!isEditMode) {
             const createdTask = await createTask(task)
             task.id = createdTask.id
-            dispatch(clearTaskForm())
             dispatch(pushTask(task))
             document.getElementById('taskForm').reset()
+            openToast('Task created!', 'success')
         } else {
             await updateTask(data.id, task)
             dispatch(updateTaskFromList(task))
+            openToast('Task updated!', 'success')
             onClose()
         }
+        dispatch(clearTaskForm())
     }
 
     const handleInput = ({ target: { name, value } }) => {

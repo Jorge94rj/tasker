@@ -5,6 +5,7 @@ import TaskCard from "../components/task";
 import { getTasks } from "../firebase/task";
 import { BoardContainer, Column } from "../styles/board";
 import { updateTaskList } from "../redux/store/task-list-slice"; 
+import getColumns from "../components/utils/get-columns";
 
 const Board = () => {
     const { taskList } = useSelector(store => store)
@@ -13,23 +14,7 @@ const Board = () => {
     useEffect(() => {
         async function getData() {
             const data = await getTasks()
-
-            const pendingList = {
-                title: 'Pending',
-                data: data.filter(l => l.status === '1')
-            }
-
-            const inProgressList = {
-                title: 'In Progress',
-                data: data.filter(l => l.status === '2')
-            }
-
-            const doneList = {
-                title: 'Done',
-                data: data.filter(l => l.status === '3')
-            }
-
-            const list = [pendingList, inProgressList, doneList]
+            const list = getColumns(data)
             dispatch(updateTaskList(list))
         }
         getData()

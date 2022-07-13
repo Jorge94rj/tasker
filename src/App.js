@@ -7,6 +7,8 @@ import { setCredentials } from './redux/store/auth-slice';
 import Board from './pages/board';
 import Login from './pages/login';
 import Register from './pages/register';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const dispatch = useDispatch()
@@ -36,6 +38,7 @@ function App() {
           <Route path='/board' element={<Board />} />
         }
       </Routes>
+      <ToastContainer />
     </BrowserRouter>
   );
 }

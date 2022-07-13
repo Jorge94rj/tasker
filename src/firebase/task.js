@@ -4,14 +4,20 @@ import {
     getDocs,
     addDoc,
     updateDoc,
-    deleteDoc
+    deleteDoc,
+    query,
+    where
 } from "firebase/firestore/lite";
 import { db } from "./config";
 
 const collectionRef = collection(db, 'tasks')
 
-export const getTasks = async () => {
-    const data = await getDocs(collectionRef)
+export const getTasks = async (priority) => {
+    const q =  priority 
+    ? query(collectionRef, where('priority', '==', priority))
+    : collectionRef
+
+    const data = await getDocs(q)
 
     return data.docs.map((d) => ({
         ...d.data(), id: d.id

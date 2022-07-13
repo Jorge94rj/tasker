@@ -4,15 +4,28 @@ import { logout } from "../../firebase/auth";
 import UpdateTaskModal from "../updateTaskModal";
 import Icon from "../icon";
 import { NavbarContainer, ItemsContainer, Item, NavMainActions } from "./style";
+import { useDispatch } from "react-redux";
+import { updateTaskList } from "../../redux/store/task-list-slice";
+import { getTasks } from "../../firebase/task";
+import getColumns from "../utils/get-columns";
 
 const Navbar = () => {
 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const [isModalOpen, setModalOpen] = useState(false)
 
     const handleOpenModal = () => setModalOpen(true)
 
     const handleCloseModal = () => setModalOpen(false)
+
+    const handleFilter = async ({target: {value}}) => {
+        const priority = value !== '-1' ? value : null
+        const data = await getTasks(priority)
+        const list = getColumns(data)
+        dispatch(updateTaskList(list))
+    }
 
     const handleLogout = async () => {
         try {
@@ -30,34 +43,24 @@ const Navbar = () => {
                     <NavMainActions>
                         <Item>Tasks</Item>
                         <Item onClick={handleOpenModal}>
-                            <Icon name="add"/>
+                            <Icon name="add" />
                         </Item>
                         <Item>
-                            <input
-                                className="search"
-                                type="text"
-                                placeholder="Search"
-                            />
-                        </Item>
-                        <Item>
-                            <select className="filter" defaultValue="">
+                            <select className="filter" defaultValue="" onChange={handleFilter}>
                                 <option value="" disabled>Filter by priority</option>
-                                <option>priority 1</option>
+                                <option value="-1">All</option>
+                                <option value="1">High - Urgent</option>
+                                <option value="2">Medium - ASAP</option>
+                                <option value="3">Low - If there's time</option>
                             </select>
                         </Item>
-                        {/* <Item>
-                            <label className="checkbox-label">Hide done tasks</label>
-                        </Item>
-                        <Item className="checkbox">
-                            <input type="checkbox"/>
-                        </Item> */}
                     </NavMainActions>
                     <Item onClick={handleLogout}>
-                        <Icon name="logout"/>
+                        <Icon name="logout" />
                     </Item>
                 </ItemsContainer>
             </NavbarContainer>
-            <UpdateTaskModal 
+            <UpdateTaskModal
                 id="createTask"
                 open={isModalOpen}
                 onClose={handleCloseModal}

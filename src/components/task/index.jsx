@@ -13,6 +13,7 @@ import {
 import { deleteTask, updateTask } from "../../firebase/task";
 import { useDispatch } from "react-redux";
 import { changeStatusFromList, removeTask } from "../../redux/store/task-list-slice";
+import openToast from "../utils/open-toast";
 
 const TaskCard = (props) => {
     const {
@@ -40,6 +41,7 @@ const TaskCard = (props) => {
                     onClick: async () => {
                         dispatch(removeTask(props))
                         await deleteTask(id, props)
+                        openToast('Task deleted!', 'success')
                     }
                 },
                 {
