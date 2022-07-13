@@ -45,18 +45,12 @@ const Navbar = () => {
                                 <option>priority 1</option>
                             </select>
                         </Item>
-                        <Item>
-                            <select className="filter" defaultValue="">
-                                <option value="" disabled>Filter by status</option>
-                                <option>status 1</option>
-                            </select>
-                        </Item>
-                        <Item>
+                        {/* <Item>
                             <label className="checkbox-label">Hide done tasks</label>
                         </Item>
                         <Item className="checkbox">
                             <input type="checkbox"/>
-                        </Item>
+                        </Item> */}
                     </NavMainActions>
                     <Item onClick={handleLogout}>
                         <Icon name="logout"/>

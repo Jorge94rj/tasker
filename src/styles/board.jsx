@@ -11,7 +11,7 @@ export const Column = styled.div`
     flex-direction: column;
     border-right: 1px solid #cfd1d0;
     border-left: 1px solid #cfd1d0;
-    // min-width: calc(352px - 18px);
+    min-width: calc(280px + 36px);
     min-height: 80vh;
     padding: 18px;
     .title {

@@ -1,30 +1,45 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Modal from "../modal";
 import { FormContainer, RowItem } from "../../styles/form-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { clearTaskForm, updateControlEvts, updateTaskForm } from "../../redux/store/form-task-slice";
+import { 
+    clearTaskForm,
+    updateControlEvts,
+    updateTaskForm,
+} from "../../redux/store/form-task-slice";
 import ErrorTag from "../errorTag";
-import { createTask } from "../../firebase/task";
-import { pushTask } from "../../redux/store/task-list-slice";
+import { createTask, updateTask } from "../../firebase/task";
+import { pushTask, updateTaskFromList } from "../../redux/store/task-list-slice";
 
 const UpdateTaskModal = (props) => {
-    const { data } = props
-    const dispatch = useDispatch()
-    const { formTask, auth:{uid} } = useSelector(store => store)
+    const { id, open, onClose, data } = props
+    const { formTask, auth: { uid } } = useSelector(store => store)
 
-    // if (data) {
-    //     dispatch(updateTaskForm(data))
-    // }
+    const isEditMode = id !== 'createTask'
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        if (open && isEditMode) {
+            dispatch(updateTaskForm(data))
+        }
+    }, [open])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        const task = {...formTask, uid}
+        const task = { ...formTask, uid }
         delete task.controls
-        const createdTask = await createTask(task)
-        task.id = createdTask.id
-        dispatch(clearTaskForm())
-        dispatch(pushTask(task))
-        document.getElementById('taskForm').reset()
+        if(!isEditMode) {
+            const createdTask = await createTask(task)
+            task.id = createdTask.id
+            dispatch(clearTaskForm())
+            dispatch(pushTask(task))
+            document.getElementById('taskForm').reset()
+        } else {
+            await updateTask(data.id, task)
+            dispatch(updateTaskFromList(task))
+            onClose()
+        }
     }
 
     const handleInput = ({ target: { name, value } }) => {
@@ -48,13 +63,14 @@ const UpdateTaskModal = (props) => {
         <Modal {...props} width="600px" height="534px">
             <form id="taskForm" onSubmit={handleSubmit}>
                 <FormContainer>
-                    <h4>{ props.id === 'createTask' ? 'Create task' : 'Edit Task'}</h4>
+                    <h4>{!isEditMode ? 'Create task' : 'Edit Task'}</h4>
                     <RowItem>
                         <input
                             name="name"
                             placeholder="Name"
                             onChange={handleInput}
                             onBlur={touchControl}
+                            value={formTask.name}
                         />
                     </RowItem>
                     {
@@ -67,10 +83,12 @@ const UpdateTaskModal = (props) => {
                             placeholder="Priority"
                             onChange={handleInput}
                             onBlur={touchControl}
-                            defaultValue=""
+                            value={formTask.priority}
                         >
                             <option value="" disabled>Select priority</option>
-                            <option value="1">priority 1</option>
+                            <option value="1">High - Urgent</option>
+                            <option value="2">Medium - ASAP</option>
+                            <option value="3">Low - If there's time</option>
                         </select>
                     </RowItem>
                     {
@@ -83,10 +101,12 @@ const UpdateTaskModal = (props) => {
                             placeholder="Status"
                             onChange={handleInput}
                             onBlur={touchControl}
-                            defaultValue=""
+                            value={formTask.status}
                         >
                             <option value="">Select status</option>
-                            <option value="1">status 1</option>
+                            <option value="1">Pending</option>
+                            <option value="2">In Progress</option>
+                            <option value="3">Done</option>
                         </select>
                     </RowItem>
                     {
@@ -99,6 +119,7 @@ const UpdateTaskModal = (props) => {
                             placeholder="Description"
                             onChange={handleInput}
                             onBlur={touchControl}
+                            value={formTask.description}
                         />
                     </RowItem>
                     {
@@ -110,6 +131,7 @@ const UpdateTaskModal = (props) => {
                             name="note"
                             placeholder="Note"
                             onChange={handleInput}
+                            value={formTask.note}
                         />
                     </RowItem>
                     <RowItem className="footer">
@@ -118,12 +140,12 @@ const UpdateTaskModal = (props) => {
                             className="btn-primary"
                             disabled={!isValid()}
                         >
-                            Create
+                            {!isEditMode ? 'Create' : 'Edit'}
                         </button>
                         <button
                             type="button"
                             className="btn-invert"
-                            onClick={props.onClose}
+                            onClick={onClose}
                         >
                             Cancel
                         </button>

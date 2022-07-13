@@ -10,6 +10,22 @@ const taskListSlice = createSlice({
             return state
         },
         updateTaskList: (_state, action) => action.payload,
+        changeStatusFromList: (state, action) => {
+            const { task, values } = action.payload
+            const { oldVal, newVal } = values
+            const currentListIdx = state[oldVal - 1]
+            currentListIdx.data = currentListIdx.data.filter(t => t.id !== task.id)
+            state[newVal - 1].data.push(task)
+            return state
+        },
+        updateTaskFromList: (state, action) => {
+            const { id, status } = action.payload
+            const listIdx = state[status -1]
+            const taskIdx = listIdx.data.findIndex(t => t.id === id)
+            listIdx.data[taskIdx] = action.payload
+            console.log(taskIdx)
+            return state
+        },
         removeTask: (state, action) => {
             const { id, status } = action.payload
             const idx = status - 1
@@ -25,6 +41,8 @@ export const { actions, reducer } = taskListSlice
 export const {
     pushTask,
     updateTaskList,
+    updateTaskFromList,
+    changeStatusFromList,
     removeTask
 } = actions
 

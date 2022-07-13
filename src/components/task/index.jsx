@@ -10,9 +10,9 @@ import {
     CardContainer,
     CardHeader,
 } from "./style";
-import { deleteTask } from "../../firebase/task";
+import { deleteTask, updateTask } from "../../firebase/task";
 import { useDispatch } from "react-redux";
-import { removeTask } from "../../redux/store/task-list-slice";
+import { changeStatusFromList, removeTask } from "../../redux/store/task-list-slice";
 
 const TaskCard = (props) => {
     const {
@@ -53,8 +53,16 @@ const TaskCard = (props) => {
     const handleOpenViewModal = () => setViewModalOpen(true)
     const handleCloseViewModal = () => setViewModalOpen(false)
 
-    const handleChange = ({ target: { value } }) => {
-        console.log(value)
+    const handleStatusChange = async ({ target: { value } }) => {
+        const task = {...props, status: value}
+        await updateTask(id, task)
+        dispatch(changeStatusFromList({
+            task,
+            values: {
+                oldVal: status,
+                newVal: value
+            }
+        }))
     }
 
     return (
@@ -75,7 +83,7 @@ const TaskCard = (props) => {
                     <h4>{name}</h4>
                     <span className="priority-indicator" />
                 </CardHeader>
-                <select value={status} onChange={handleChange}>
+                <select value={status} onChange={handleStatusChange}>
                     <option value="1">Pending</option>
                     <option value="2">In Progress</option>
                     <option value="3">Done</option>
@@ -85,6 +93,7 @@ const TaskCard = (props) => {
                 id="viewTask"
                 open={isViewModalOpen}
                 onClose={handleCloseViewModal}
+                data={props}
             />
             <UpdateTaskModal
                 id="updateTask"

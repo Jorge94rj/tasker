@@ -10,8 +10,6 @@ const Board = () => {
     const { taskList } = useSelector(store => store)
     const dispatch = useDispatch()
 
-    // https://www.youtube.com/watch?v=jCY6DH8F4oc
-
     useEffect(() => {
         async function getData() {
             const data = await getTasks()
@@ -32,7 +30,6 @@ const Board = () => {
             }
 
             const list = [pendingList, inProgressList, doneList]
-            console.log('list->', list)
             dispatch(updateTaskList(list))
         }
         getData()
@@ -44,7 +41,7 @@ const Board = () => {
             <BoardContainer>
                 {
                     taskList.map(({title, data}, index) => (
-                        <Column key={index}>
+                        <Column key={index} idx={index} hasBorders={data.length > 0}>
                             <label className="title">{title}</label>
                             {
                                 data.map(task => (
@@ -54,23 +51,7 @@ const Board = () => {
                         </Column>
                     )) 
                 }
-                {/* <Column>
-                    <label className="title">Pending</label>
-                    <TaskCard />
-                    <TaskCard />
-                    <TaskCard />
-                </Column>
-                <Column>
-                    <label className="title">In progress</label>
-                    <TaskCard />
-                </Column>
-                <Column>
-                    <label className="title">Done</label>
-                    <TaskCard />
-                </Column> */}
             </BoardContainer>
-            {/* {taskList.map(t => console.log('item->', t))}
-            {taskList && taskList.length && (<span>items {taskList.length}</span>)} */}
         </>
     )
 }
