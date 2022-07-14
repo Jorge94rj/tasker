@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { registerUser } from "../firebase/auth"
 import { updateRegisterForm } from "../redux/store/form-register-slice"
+import { load } from "../redux/store/ui-slice"
 import { AuthCard, AuthCardFooter, AuthContainer, RowItem } from "../styles/auth"
 
 const Register = () => {
@@ -17,7 +18,9 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            registerUser(username, password)
+            dispatch(load({ loading: true }))
+            await registerUser(username, password)
+            dispatch(load({ loading: false }))
             navigate('/board')
         } catch(error) {
             console.log(error)

@@ -14,6 +14,7 @@ import { deleteTask, updateTask } from "../../firebase/task";
 import { useDispatch } from "react-redux";
 import { changeStatusFromList, removeTask } from "../../redux/store/task-list-slice";
 import openToast from "../utils/open-toast";
+import { load } from "../../redux/store/ui-slice";
 
 const TaskCard = (props) => {
     const {
@@ -40,7 +41,9 @@ const TaskCard = (props) => {
                     label: 'Yes',
                     onClick: async () => {
                         dispatch(removeTask(props))
+                        dispatch(load({ loading: true }))
                         await deleteTask(id, props)
+                        dispatch(load({ loading: false }))
                         openToast('Task deleted!', 'success')
                     }
                 },
@@ -57,7 +60,9 @@ const TaskCard = (props) => {
 
     const handleStatusChange = async ({ target: { value } }) => {
         const task = {...props, status: value}
+        dispatch(load({ loading: true }))
         await updateTask(id, task)
+        dispatch(load({ loading: false }))
         dispatch(changeStatusFromList({
             task,
             values: {

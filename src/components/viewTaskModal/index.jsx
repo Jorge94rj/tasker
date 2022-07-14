@@ -4,7 +4,7 @@ import { FormContainer, RowItem } from "../../styles/form-modal";
 
 const ViewTaskModal = (props) => {
     const { data } = props
-    const { name, status, description, note } = data
+    const { name, status, description, note, priority } = data
 
     const statusText = (() => {
         switch (status) {
@@ -19,7 +19,7 @@ const ViewTaskModal = (props) => {
         <Modal {...props} width="600px" height="435px">
             <div>
                 <FormContainer>
-                    <RowItem>
+                    <RowItem priority={priority}>
                         <h4>{name}</h4>
                         <span className="priority-indicator" />
                     </RowItem>

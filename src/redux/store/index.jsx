@@ -4,6 +4,7 @@ import formLoginSlice from "./form-login-slice";
 import formRegisterSlice from "./form-register-slice";
 import formTaskSlice from "./form-task-slice";
 import taskListSlice from './task-list-slice'
+import uiSlice from "./ui-slice"
 
 const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
         taskList: taskListSlice,
         formTask: formTaskSlice,
         formLogin: formLoginSlice,
-        formRegister: formRegisterSlice
+        formRegister: formRegisterSlice,
+        ui: uiSlice
     }
 })
 

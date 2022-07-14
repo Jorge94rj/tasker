@@ -6,6 +6,7 @@ import { getTasks } from "../firebase/task";
 import { BoardContainer, Column } from "../styles/board";
 import { updateTaskList } from "../redux/store/task-list-slice"; 
 import getColumns from "../components/utils/get-columns";
+import { load } from "../redux/store/ui-slice";
 
 const Board = () => {
     const { taskList } = useSelector(store => store)
@@ -13,7 +14,9 @@ const Board = () => {
 
     useEffect(() => {
         async function getData() {
+            dispatch(load({ loading: true }))
             const data = await getTasks()
+            dispatch(load({ loading: false }))
             const list = getColumns(data)
             dispatch(updateTaskList(list))
         }

@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { updateTaskList } from "../../redux/store/task-list-slice";
 import { getTasks } from "../../firebase/task";
 import getColumns from "../utils/get-columns";
+import { load } from "../../redux/store/ui-slice";
 
 const Navbar = () => {
 
@@ -22,14 +23,18 @@ const Navbar = () => {
 
     const handleFilter = async ({target: {value}}) => {
         const priority = value !== '-1' ? value : null
+        dispatch(load({ loading: true }))
         const data = await getTasks(priority)
+        dispatch(load({ loading: false }))
         const list = getColumns(data)
         dispatch(updateTaskList(list))
     }
 
     const handleLogout = async () => {
         try {
+            dispatch(load({ loading: true }))
             await logout()
+            dispatch(load({ loading: false }))
             navigate('/login')
         } catch (error) {
             console.log(error)

@@ -11,6 +11,7 @@ import ErrorTag from "../errorTag";
 import { createTask, updateTask } from "../../firebase/task";
 import { pushTask, updateTaskFromList } from "../../redux/store/task-list-slice";
 import openToast from "../utils/open-toast";
+import { load } from "../../redux/store/ui-slice";
 
 const UpdateTaskModal = (props) => {
     const { id, open, onClose, data } = props
@@ -31,13 +32,17 @@ const UpdateTaskModal = (props) => {
         const task = { ...formTask, uid }
         delete task.controls
         if (!isEditMode) {
+            dispatch(load({ loading: true }))
             const createdTask = await createTask(task)
+            dispatch(load({ loading: false }))
             task.id = createdTask.id
             dispatch(pushTask(task))
             document.getElementById('taskForm').reset()
             openToast('Task created!', 'success')
         } else {
+            dispatch(load({ loading: true }))
             await updateTask(data.id, task)
+            dispatch(load({ loading: false }))
             dispatch(updateTaskFromList(task))
             openToast('Task updated!', 'success')
             onClose()
